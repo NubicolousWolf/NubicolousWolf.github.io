@@ -1,0 +1,21 @@
+# 不忽略 .env 文件
+# .env
+
+# 没有 忽略身份验证文件
+# token_cache.bin
+
+# 忽略 Python 的缓存文件
+__pycache__/
+*.py[cod]
+
+# 忽略 node 项目的依赖包
+node_modules/
+
+# 忽略日志文件
+*.log
+
+# 忽略临时文件
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
