@@ -3,9 +3,755 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="智能日历助手 - 使用自然语言创建Outlook日历事件">
     <title>智能日历助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #4a76d0;
+            --primary-dark: #3a66c0;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: #f9fafb;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        #root {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, #4a76d0, #6a5acd);
+            color: white;
+            box-shadow: var(--shadow);
+            padding: 1.5rem 0;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .app-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .app-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* 主内容区 */
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* 输入区域 */
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 118, 208, 0.2);
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            color: var(--dark);
+        }
+        
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        /* 进度条 */
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a76d0, #6a5acd);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        
+        /* 结果区域 */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .event-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .event-list-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            font-weight: 600;
+        }
+        
+        .event-item {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .event-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .event-item.selected {
+            background-color: #e6f0ff;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .event-time {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+        }
+        
+        .event-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .event-details {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: 100%;
+        }
+        
+        .detail-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+        }
+        
+        /* 认证模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+            background: none;
+            border: none;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .auth-code {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .code-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin: 0.5rem 0;
+            color: var(--primary);
+        }
+        
+        .auth-steps {
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-step {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(74, 118, 208, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 页脚 */
+        footer {
+            background: white;
+            border-top: 1px solid #eee;
+            padding: 1.5rem 0;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .app-title {
+                font-size: 1.75rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <header>
+            <div class="header-content">
+                <h1 class="app-title">智能日历助手</h1>
+                <p class="app-subtitle">使用自然语言创建Outlook日历事件</p>
+            </div>
+        </header>
+        
+        <main>
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>日程安排描述</h2>
+                    </div>
+                    <div class="card-body">
+                        <textarea id="input" placeholder="例如：&#10;- 明天下午2点团队会议，地点在201会议室，讨论季度目标&#10;- 后天上午10点线上会议，使用Teams，评审设计方案&#10;- 周五下午3点与张经理面谈，地点在公司咖啡厅，讨论新合同细节"></textarea>
+                        
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="create-btn">
+                                <i class="fas fa-calendar-plus"></i>创建日历事件
+                            </button>
+                            <button class="btn btn-outline" id="example-btn">
+                                <i class="fas fa-lightbulb"></i>插入示例文本
+                            </button>
+                            <button class="btn btn-outline" id="clear-btn">
+                                <i class="fas fa-trash-alt"></i>清空
+                            </button>
+                        </div>
+                        
+                        <div class="progress-container" id="progress-container" style="display: none;">
+                            <div class="progress-info">
+                                <span id="progress-status">正在处理...</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-grid" id="results-container" style="display: none;">
+                    <div class="event-list">
+                        <div class="event-list-header">
+                            解析的事件 (<span id="event-count">0</span>)
+                        </div>
+                        <div id="event-list">
+                            <!-- 事件列表将通过JS动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="event-details" id="event-details">
+                        <!-- 事件详情将通过JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>智能日历助手 &copy; 2023 | 让日程管理更简单</p>
+        </footer>
+    </div>
+
+    <script>
+        // 模拟数据用于演示
+        const mockEvents = [
+            {
+                subject: "团队会议",
+                start: "2025-07-19T14:00:00",
+                end: "2025-07-19T15:30:00",
+                location: "201会议室",
+                description: "讨论项目进度和下一步计划",
+                result: {
+                    status: "success",
+                    event_id: "AAMkAGI1",
+                    web_link: "https://outlook.live.com/calendar/event"
+                }
+            },
+            {
+                subject: "客户演示",
+                start: "2025-07-20T10:00:00",
+                end: "2025-07-20T11:30:00",
+                location: "Teams线上会议",
+                description: "向客户展示新产品功能",
+                result: {
+                    status: "success",
+                    event_id: "AAMkAGI2",
+                    web_link: "https://outlook.live.com/calendar/event"
+                }
+            },
+            {
+                subject: "项目评审",
+                start: "2025-07-21T09:00:00",
+                end: "2025-07-21T12:00:00",
+                location: "公司会议室",
+                description: "季度项目评审会议",
+                result: {
+                    status: "error",
+                    message: "时间冲突，无法创建事件"
+                }
+            }
+        ];
+        
+        // DOM元素
+        const inputElement = document.getElementById('input');
+        const createBtn = document.getElementById('create-btn');
+        const exampleBtn = document.getElementById('example-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressStatus = document.getElementById('progress-status');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressFill = document.getElementById('progress-fill');
+        const resultsContainer = document.getElementById('results-container');
+        const eventList = document.getElementById('event-list');
+        const eventDetails = document.getElementById('event-details');
+        const eventCount = document.getElementById('event-count');
+        
+        // 当前选中的事件索引
+        let selectedEventIndex = 0;
+        
+        // 插入示例文本
+        exampleBtn.addEventListener('click', () => {
+            inputElement.value = "明天下午2-4点开项目会议，地点在201会议室，讨论季度目标\n" +
+                                "后天上午10点线上会议，使用Teams，评审设计方案\n" +
+                                "周五下午3点与张经理面谈，地点在公司咖啡厅，讨论新合同细节";
+        });
+        
+        // 清空输入
+        clearBtn.addEventListener('click', () => {
+            inputElement.value = "";
+            resultsContainer.style.display = "none";
+        });
+        
+        // 创建日历事件
+        createBtn.addEventListener('click', () => {
+            const input = inputElement.value.trim();
+            
+            if (!input) {
+                alert("请输入日程描述");
+                return;
+            }
+            
+            // 显示进度条
+            progressContainer.style.display = "block";
+            progressStatus.textContent = "正在处理...";
+            progressPercent.textContent = "0%";
+            progressFill.style.width = "0%";
+            
+            // 模拟进度更新
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressPercent.textContent = `${progress}%`;
+                progressFill.style.width = `${progress}%`;
+                
+                if (progress === 30) progressStatus.textContent = "解析自然语言描述...";
+                if (progress === 60) progressStatus.textContent = "提取事件信息...";
+                if (progress === 90) progressStatus.textContent = "创建日历事件...";
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    
+                    // 显示结果
+                    setTimeout(() => {
+                        progressContainer.style.display = "none";
+                        displayResults(mockEvents);
+                    }, 500);
+                }
+            }, 300);
+        });
+        
+        // 显示结果
+        function displayResults(events) {
+            resultsContainer.style.display = "grid";
+            eventCount.textContent = events.length;
+            
+            // 渲染事件列表
+            eventList.innerHTML = "";
+            events.forEach((event, index) => {
+                const eventElement = document.createElement('div');
+                eventElement.className = `event-item ${index === selectedEventIndex ? 'selected' : ''}`;
+                eventElement.innerHTML = `
+                    <div class="event-title">${event.subject}</div>
+                    <div class="event-time">${formatDateTime(event.start)} - ${formatTime(event.end)}</div>
+                    <div class="event-status ${event.result.status === 'success' ? 'status-success' : 'status-error'}">
+                        ${event.result.status === 'success' ? '✓ 创建成功' : '✗ 创建失败'}
+                    </div>
+                `;
+                
+                eventElement.addEventListener('click', () => {
+                    document.querySelectorAll('.event-item').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    eventElement.classList.add('selected');
+                    selectedEventIndex = index;
+                    displayEventDetails(events[index]);
+                });
+                
+                eventList.appendChild(eventElement);
+            });
+            
+            // 显示第一个事件的详情
+            displayEventDetails(events[0]);
+        }
+        
+        // 显示事件详情
+        function displayEventDetails(event) {
+            eventDetails.innerHTML = `
+                <h3 class="event-title" style="margin-bottom: 1.5rem;">${event.subject}</h3>
+                
+                <div class="detail-item">
+                    <div class="detail-label">开始时间</div>
+                    <div class="detail-value">${formatDateTime(event.start)}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">结束时间</div>
+                    <div class="detail-value">${formatDateTime(event.end)}</div>
+                </div>
+                
+                ${event.location ? `
+                <div class="detail-item">
+                    <div class="detail-label">地点</div>
+                    <div class="detail-value">${event.location}</div>
+                </div>` : ''}
+                
+                ${event.description ? `
+                <div class="detail-item">
+                    <div class="detail-label">描述</div>
+                    <div class="detail-value">${event.description}</div>
+                </div>` : ''}
+                
+                <div class="detail-item" style="margin-top: 2rem;">
+                    <div class="detail-label">创建结果</div>
+                    ${event.result.status === 'success' ? `
+                    <div style="background-color: #d4edda; padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; color: #155724; margin-bottom: 0.5rem;">
+                            <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                            <span style="font-weight: 500;">事件创建成功</span>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <div><strong>事件ID:</strong> ${event.result.event_id}</div>
+                            ${event.result.web_link ? `
+                            <div style="margin-top: 0.5rem;">
+                                <a href="${event.result.web_link}" target="_blank" style="color: #0d6efd; text-decoration: none;">
+                                    <i class="fas fa-external-link-alt" style="margin-right: 0.5rem;"></i>
+                                    在日历中查看
+                                </a>
+                            </div>` : ''}
+                        </div>
+                    </div>` : `
+                    <div style="background-color: #f8d7da; padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; color: #721c24; margin-bottom: 0.5rem;">
+                            <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
+                            <span style="font-weight: 500;">事件创建失败</span>
+                        </div>
+                        <div><strong>错误信息:</strong> ${event.result.message}</div>
+                    </div>`}
+                </div>
+            `;
+        }
+        
+        // 格式化日期时间
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 格式化时间
+        function formatTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            // 显示模拟结果用于演示
+            // displayResults(mockEvents);
+        });
+    </script>
 </body>
 </html>

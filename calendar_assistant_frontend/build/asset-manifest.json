@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/calendar_assistant_frontend/static/css/main.36edc1af.css",
-    "main.js": "/calendar_assistant_frontend/static/js/main.288c2eb8.js",
+    "main.js": "/calendar_assistant_frontend/static/js/main.8f99b2ba.js",
     "index.html": "/calendar_assistant_frontend/index.html",
     "main.36edc1af.css.map": "/calendar_assistant_frontend/static/css/main.36edc1af.css.map",
-    "main.288c2eb8.js.map": "/calendar_assistant_frontend/static/js/main.288c2eb8.js.map"
+    "main.8f99b2ba.js.map": "/calendar_assistant_frontend/static/js/main.8f99b2ba.js.map"
   },
   "entrypoints": [
     "static/css/main.36edc1af.css",
-    "static/js/main.288c2eb8.js"
+    "static/js/main.8f99b2ba.js"
   ]
 }
