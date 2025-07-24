@@ -1,0 +1,156 @@
+.app-root {
+  min-height: 100vh;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(90deg, #4a76d0 0%, #6a5acd 100%);
+  padding: 1.5rem 0;
+  color: #fff;
+  text-align: left;
+  padding-left: 2rem;
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.header-subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+}
+
+.app-main {
+  flex: 1;
+  max-width: 1200px;
+  margin: 2rem auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.input-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.input-card-title {
+  font-weight: bold;
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.input-textarea {
+  width: 100%;
+  min-height: 150px;
+  border: 1.5px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.input-textarea:focus {
+  border: 1.5px solid #4a76d0;
+  box-shadow: 0 0 0 2px #4a76d055;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-primary {
+  background: linear-gradient(90deg, #4a76d0 0%, #6a5acd 100%);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg, #3a5bb5 0%, #4b3ca0 100%);
+  transform: translateY(-2px);
+}
+.btn-secondary {
+  background: #e9ecef;
+  color: #333;
+}
+.btn-secondary:hover {
+  background: #d6d8db;
+  transform: translateY(-2px);
+}
+
+.result-area {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  min-height: 320px;
+}
+@media (max-width: 900px) {
+  .result-area {
+    flex-direction: column;
+  }
+}
+
+.raw-output-area {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+}
+.raw-output-header {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+.raw-output-content {
+  background: #f4f4f4;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 1rem;
+  max-height: 350px;
+  overflow: auto;
+}
+
+.app-footer {
+  background: #e9ecef;
+  color: #666;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+  margin-top: 2rem;
+  border-top: 1px solid #dee2e6;
+}
